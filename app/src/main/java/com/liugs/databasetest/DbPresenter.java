@@ -21,6 +21,9 @@ public class DbPresenter {
             view.clear();
             view = null;
         }
+        if (helper != null){
+            helper.close();
+        }
     }
 
     public void init(Context applicationContext) {
