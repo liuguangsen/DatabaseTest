@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">DatabaseTest</string>
+    <string name="change">修改</string>
+    <string name="delete">删除</string>
 </resources>
