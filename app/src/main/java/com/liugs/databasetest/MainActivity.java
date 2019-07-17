@@ -1,5 +1,11 @@
 package com.liugs.databasetest;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ListView;
@@ -9,17 +15,20 @@ import com.liugs.databasetest.entity.Student;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements DbView , StudentAdapter.ItemOperation{
+public class MainActivity extends AppCompatActivity implements DbView, StudentAdapter.ItemOperation {
 
     private DbPresenter presenter;
     private StudentAdapter adapter;
+    private int requestPermissionCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         initListView();
+
+        checkpermission();
+
         presenter = new DbPresenter(this);
         presenter.init(getApplicationContext());
     }
@@ -27,7 +36,7 @@ public class MainActivity extends AppCompatActivity implements DbView , StudentA
     private void initListView() {
         ListView listView = findViewById(R.id.listView);
         ArrayList<Student> list = new ArrayList<>();
-        adapter = new StudentAdapter(list,this);
+        adapter = new StudentAdapter(list, this);
         listView.setAdapter(adapter);
     }
 
@@ -36,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements DbView , StudentA
         presenter.release();
         presenter = null;
         super.onDestroy();
+        MainApplication.getRefWatcher(getApplicationContext()).watch(this);
     }
 
     @Override
@@ -56,5 +66,25 @@ public class MainActivity extends AppCompatActivity implements DbView , StudentA
     @Override
     public void onDelete(Student student) {
 
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == 0 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // 已经有权限，可以做什么呢
+        } else {
+            checkpermission();
+        }
+    }
+
+    private void checkpermission() {
+        if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
+            if (requestPermissionCount > 2) {
+                Toast.makeText(this, "你必须开启存储权限，才能操作", Toast.LENGTH_SHORT).show();
+            } else {
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 0);
+            }
+        }
     }
 }
