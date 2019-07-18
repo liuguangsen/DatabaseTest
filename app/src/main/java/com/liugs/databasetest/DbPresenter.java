@@ -10,41 +10,42 @@ import com.liugs.databasetest.entity.Student;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 
-public class DbPresenter {
+class DbPresenter {
     private WeakReference<DbView> view;
 
     private MyDbHelper helper;
 
-    public DbPresenter(DbView view) {
+    DbPresenter(DbView view) {
         this.view = new WeakReference<>(view);
     }
 
-    public void release() {
+    void release() {
         if (view != null) {
             view.clear();
             view = null;
         }
-        if (helper != null){
+        if (helper != null) {
             helper.close();
         }
     }
 
-    public void init(Context applicationContext) {
+    void init(Context applicationContext) {
         if (helper == null) {
             helper = new MyDbHelper(applicationContext);
         }
-        insert("第一个", 1);
     }
 
-    public void insert(String name, int age) {
+    void insert(int id, String name, int age) {
         ContentValues values = new ContentValues();
-        values.put(Constant.COLUMN_NAME, name);
+        // TODO 如果名字一样和年龄也一样 可以看下 生成的id 是啥样的
+        // values.put(Constant.COLUMN_ID,id);
+        values.put(Constant.COLUMN_NAME , name + System.currentTimeMillis());
         values.put(Constant.COLUMN_AGE, age);
         SQLiteDatabase writableDatabase = helper.getWritableDatabase();
-        long id = writableDatabase.insert(Constant.TABLE_NAME, null, values);
+        long index = writableDatabase.insert(Constant.TABLE_NAME, null, values);
         writableDatabase.close();
         Student s = new Student();
-        s.setId(id);
+        s.setId(index);
         s.setName(name);
         s.setAge(age);
         DbView dbView = view.get();
@@ -53,13 +54,13 @@ public class DbPresenter {
         }
     }
 
-    public void search(){
+    void search() {
         SQLiteDatabase readableDatabase = helper.getReadableDatabase();
         Cursor query = readableDatabase.query(Constant.TABLE_NAME, null, null, null, null, null, null);
         ArrayList<Student> list = new ArrayList<>();
         Student student;
-        while (query.moveToNext()){
-            String name = query.getString(query.getColumnIndex(Constant.TABLE_NAME));
+        while (query.moveToNext()) {
+            String name = query.getString(query.getColumnIndex(Constant.COLUMN_NAME));
             int age = query.getInt(query.getColumnIndex(Constant.COLUMN_AGE));
             student = new Student();
             student.setName(name);
@@ -69,8 +70,37 @@ public class DbPresenter {
         readableDatabase.close();
         query.close();
         DbView dbView = view.get();
-        if (dbView != null){
+        if (dbView != null) {
             dbView.refreshListView(list);
         }
+    }
+
+    void update(Student student) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor = db.query(Constant.TABLE_NAME, null, Constant.COLUMN_ID + "=?", new String[]{student.getId() + ""}, null, null, null);
+        if (cursor == null || !cursor.moveToNext()) {
+            if (cursor != null) {
+                cursor.close();
+            }
+            db.close();
+            return;
+        }
+
+        long id = cursor.getLong(cursor.getColumnIndex(Constant.COLUMN_ID));
+        ContentValues values = new ContentValues();
+        values.put(Constant.COLUMN_ID, student.getId());
+        values.put(Constant.COLUMN_NAME, student.getName());
+        values.put(Constant.COLUMN_AGE, student.getAge());
+        db.update(Constant.TABLE_NAME, values, Constant.COLUMN_ID + "=?", new String[]{id + ""});
+        db.close();
+
+        search();
+    }
+
+    void delete(Student student) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        int delete = db.delete(Constant.TABLE_NAME, Constant.COLUMN_ID + "=?", new String[]{student.getId() + ""});
+
+        search();
     }
 }

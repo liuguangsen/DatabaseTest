@@ -1,7 +1,6 @@
 package com.liugs.databasetest;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -20,24 +19,31 @@ public class MainActivity extends AppCompatActivity implements DbView, StudentAd
     private DbPresenter presenter;
     private StudentAdapter adapter;
     private int requestPermissionCount;
+    private OperationDialog operationDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        initListView();
+        initView();
 
         checkpermission();
 
         presenter = new DbPresenter(this);
         presenter.init(getApplicationContext());
+
+        presenter.search();
+        // presenter.insert(0, "老大", 100);
     }
 
-    private void initListView() {
+    private void initView() {
         ListView listView = findViewById(R.id.listView);
         ArrayList<Student> list = new ArrayList<>();
         adapter = new StudentAdapter(list, this);
         listView.setAdapter(adapter);
+        adapter.setCallback(this);
+
+        operationDialog = new OperationDialog(MainActivity.this);
     }
 
     @Override
@@ -60,12 +66,20 @@ public class MainActivity extends AppCompatActivity implements DbView, StudentAd
 
     @Override
     public void onChange(Student student) {
-
+        operationDialog.show();
+        operationDialog.setChangeStudent(student);
+        operationDialog.setCallback(new OperationDialog.UpdateOperation() {
+            @Override
+            public void onStudent(Student student) {
+                operationDialog.dismiss();
+                presenter.update(student);
+            }
+        });
     }
 
     @Override
     public void onDelete(Student student) {
-
+        presenter.delete(student);
     }
 
     @Override

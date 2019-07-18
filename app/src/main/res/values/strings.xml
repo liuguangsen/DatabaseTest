@@ -2,4 +2,10 @@
     <string name="app_name">DatabaseTest</string>
     <string name="change">修改</string>
     <string name="delete">删除</string>
+    <string name="name">学生的名字</string>
+    <string name="age">学生的年龄</string>
+    <string name="title">标题</string>
+    <string name="sure">确认</string>
+    <string name="nameHint">名字是 %s</string>
+    <string name="ageHint">年龄是 %d</string>
 </resources>
