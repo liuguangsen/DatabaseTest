@@ -8,4 +8,8 @@
     <string name="sure">确认</string>
     <string name="nameHint">名字是 %s</string>
     <string name="ageHint">年龄是 %d</string>
+    <string name="add">添加</string>
+    <string name="data">id: %d\n名字：%s\n年龄：%d</string>
+    <string name="hint">请输入名字和年龄</string>
+    <string name="refresh">刷新</string>
 </resources>

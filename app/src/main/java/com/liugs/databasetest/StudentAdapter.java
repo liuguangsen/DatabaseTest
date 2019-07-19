@@ -46,14 +46,14 @@ public class StudentAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(context).inflate(R.layout.item_list, parent,false);
+            convertView = LayoutInflater.from(context).inflate(R.layout.item_list, parent, false);
             holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
         }
         final Student student = list.get(position);
-        holder.dataView.setText(student.getName());
+        holder.dataView.setText(context.getString(R.string.data, student.getId(), student.getName(), student.getAge()));
         holder.changeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

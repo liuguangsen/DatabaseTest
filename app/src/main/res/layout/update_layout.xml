@@ -1,25 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:padding="16dp">
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
-    <TextView
-        android:id="@+id/title"
+    <android.support.v7.widget.AppCompatTextView
+        android:id="@+id/dialog_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:padding="5dp"
         android:text="@string/change"
+        android:layout_marginTop="0dp"
         android:textColor="@color/colorPrimary" />
 
     <android.support.v7.widget.AppCompatEditText
         android:id="@+id/name"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/title"
+        android:layout_below="@id/dialog_title"
         android:hint="@string/name"
+        android:layout_centerHorizontal="true"
         android:padding="15dp"
         android:textColor="@color/colorPrimary"
         android:textColorHint="@color/colorPrimary" />
@@ -30,6 +29,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
         android:hint="@string/age"
+        android:inputType="number"
+        android:layout_centerHorizontal="true"
         android:padding="15dp"
         android:textColor="@color/colorPrimary"
         android:textColorHint="@color/colorPrimary" />

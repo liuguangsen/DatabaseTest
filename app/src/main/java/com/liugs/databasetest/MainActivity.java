@@ -1,12 +1,14 @@
 package com.liugs.databasetest;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.content.pm.PackageManager;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -27,13 +29,16 @@ public class MainActivity extends AppCompatActivity implements DbView, StudentAd
         setContentView(R.layout.activity_main);
         initView();
 
-        checkpermission();
+        checkPermission();
 
         presenter = new DbPresenter(this);
         presenter.init(getApplicationContext());
-
         presenter.search();
-        // presenter.insert(0, "老大", 100);
+
+        /*AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(R.layout.update_layout).create();
+        dialog.show();*/
+
     }
 
     private void initView() {
@@ -64,11 +69,22 @@ public class MainActivity extends AppCompatActivity implements DbView, StudentAd
         adapter.setList(students);
     }
 
+    public void add(View view) {
+        operationDialog.show();
+        operationDialog.setAddCallback(new OperationDialog.AddOperation() {
+            @Override
+            public void onStudent(Student student) {
+                operationDialog.dismiss();
+                presenter.insert(student.getName(), student.getAge());
+            }
+        });
+    }
+
     @Override
     public void onChange(Student student) {
         operationDialog.show();
         operationDialog.setChangeStudent(student);
-        operationDialog.setCallback(new OperationDialog.UpdateOperation() {
+        operationDialog.setUpdateCallback(new OperationDialog.UpdateOperation() {
             @Override
             public void onStudent(Student student) {
                 operationDialog.dismiss();
@@ -76,6 +92,11 @@ public class MainActivity extends AppCompatActivity implements DbView, StudentAd
             }
         });
     }
+
+    public void refresh(View view) {
+        presenter.search();
+    }
+
 
     @Override
     public void onDelete(Student student) {
@@ -88,11 +109,11 @@ public class MainActivity extends AppCompatActivity implements DbView, StudentAd
         if (requestCode == 0 && grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // 已经有权限，可以做什么呢
         } else {
-            checkpermission();
+            checkPermission();
         }
     }
 
-    private void checkpermission() {
+    private void checkPermission() {
         if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {
             if (requestPermissionCount > 2) {
                 Toast.makeText(this, "你必须开启存储权限，才能操作", Toast.LENGTH_SHORT).show();

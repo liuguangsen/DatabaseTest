@@ -8,8 +8,8 @@ import static com.liugs.databasetest.Constant.SQL_CREATE_TABLE_V2;
 import static com.liugs.databasetest.Constant.DB_NAME;
 import static com.liugs.databasetest.Constant.VERSION;
 
-public class MyDbHelper extends SQLiteOpenHelper {
-    public MyDbHelper(Context context) {
+public class LocalDbHelper extends SQLiteOpenHelper {
+    public LocalDbHelper(Context context) {
         super(context, DB_NAME, null, VERSION);
     }
 

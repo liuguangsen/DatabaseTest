@@ -13,7 +13,7 @@ import java.util.ArrayList;
 class DbPresenter {
     private WeakReference<DbView> view;
 
-    private MyDbHelper helper;
+    private LocalDbHelper helper;
 
     DbPresenter(DbView view) {
         this.view = new WeakReference<>(view);
@@ -31,15 +31,13 @@ class DbPresenter {
 
     void init(Context applicationContext) {
         if (helper == null) {
-            helper = new MyDbHelper(applicationContext);
+            helper = new LocalDbHelper(applicationContext);
         }
     }
 
-    void insert(int id, String name, int age) {
+    void insert(String name, int age) {
         ContentValues values = new ContentValues();
-        // TODO 如果名字一样和年龄也一样 可以看下 生成的id 是啥样的
-        // values.put(Constant.COLUMN_ID,id);
-        values.put(Constant.COLUMN_NAME , name + System.currentTimeMillis());
+        values.put(Constant.COLUMN_NAME , name);
         values.put(Constant.COLUMN_AGE, age);
         SQLiteDatabase writableDatabase = helper.getWritableDatabase();
         long index = writableDatabase.insert(Constant.TABLE_NAME, null, values);
@@ -62,9 +60,11 @@ class DbPresenter {
         while (query.moveToNext()) {
             String name = query.getString(query.getColumnIndex(Constant.COLUMN_NAME));
             int age = query.getInt(query.getColumnIndex(Constant.COLUMN_AGE));
+            long id = query.getLong(query.getColumnIndex(Constant.COLUMN_ID));
             student = new Student();
             student.setName(name);
             student.setAge(age);
+            student.setId(id);
             list.add(student);
         }
         readableDatabase.close();
@@ -91,7 +91,7 @@ class DbPresenter {
         values.put(Constant.COLUMN_ID, student.getId());
         values.put(Constant.COLUMN_NAME, student.getName());
         values.put(Constant.COLUMN_AGE, student.getAge());
-        db.update(Constant.TABLE_NAME, values, Constant.COLUMN_ID + "=?", new String[]{id + ""});
+        db.update(Constant.TABLE_NAME, values, Constant.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
         db.close();
 
         search();
