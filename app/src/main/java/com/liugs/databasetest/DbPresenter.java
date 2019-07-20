@@ -37,7 +37,7 @@ class DbPresenter {
 
     void insert(String name, int age) {
         ContentValues values = new ContentValues();
-        values.put(Constant.COLUMN_NAME , name);
+        values.put(Constant.COLUMN_NAME, name);
         values.put(Constant.COLUMN_AGE, age);
         SQLiteDatabase writableDatabase = helper.getWritableDatabase();
         long index = writableDatabase.insert(Constant.TABLE_NAME, null, values);
@@ -100,7 +100,37 @@ class DbPresenter {
     void delete(Student student) {
         SQLiteDatabase db = helper.getWritableDatabase();
         int delete = db.delete(Constant.TABLE_NAME, Constant.COLUMN_ID + "=?", new String[]{student.getId() + ""});
+        db.close();
+        if (delete == 1) {
+            db.close();
+            search();
+        }else {
+            view.get().showToast("删除失败");
+        }
+    }
 
-        search();
+    void find(String nameParam) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        Cursor cursor = db.query(Constant.TABLE_NAME, null, Constant.COLUMN_NAME + " LIKE '%" + nameParam + "%'", null, null, null, null);
+        ArrayList<Student> students = new ArrayList<>();
+        while (cursor.moveToNext()) {
+            int nameIndex = cursor.getColumnIndex(Constant.COLUMN_NAME);
+            int idIndex = cursor.getColumnIndex(Constant.COLUMN_ID);
+            long id = cursor.getLong(idIndex);
+            int ageIndex = cursor.getColumnIndex(Constant.COLUMN_AGE);
+            int age = cursor.getInt(ageIndex);
+            String name = cursor.getString(nameIndex);
+            Student student = new Student();
+            student.setId(id);
+            student.setName(name);
+            student.setAge(age);
+            students.add(student);
+        }
+        cursor.close();
+        db.close();
+        DbView dbView = view.get();
+        if (dbView != null) {
+            dbView.refreshListView(students);
+        }
     }
 }

@@ -12,4 +12,6 @@
     <string name="data">id: %d\n名字：%s\n年龄：%d</string>
     <string name="hint">请输入名字和年龄</string>
     <string name="refresh">刷新</string>
+    <string name="save_permission_hint">你必须开启存储权限，才能操作</string>
+    <string name="find">查询学生</string>
 </resources>
