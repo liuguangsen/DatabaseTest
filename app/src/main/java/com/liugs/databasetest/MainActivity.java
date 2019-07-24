@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements DbView, StudentAd
             @Override
             public void onStudent(Student student) {
                 operationDialog.dismiss();
-                presenter.insert(student.getName(), student.getAge());
+                presenter.insert(student);
             }
         });
     }
@@ -119,7 +119,13 @@ public class MainActivity extends AppCompatActivity implements DbView, StudentAd
         presenter.find(name);
     }
 
-
+    public void update(View view) {
+        if (DbUtil.isNewDbVersion(getApplicationContext())) {
+            Toast.makeText(MainActivity.this, R.string.new_db_has_update, Toast.LENGTH_LONG).show();
+        }else {
+            presenter.Upgrade(getApplicationContext());
+        }
+    }
 
     private void checkPermission() {
         if (!(ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED)) {

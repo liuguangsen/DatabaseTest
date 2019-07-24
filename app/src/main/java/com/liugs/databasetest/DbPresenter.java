@@ -35,10 +35,17 @@ class DbPresenter {
         }
     }
 
-    void insert(String name, int age) {
+    void insert(Student student) {
         ContentValues values = new ContentValues();
+        String name = student.getName();
         values.put(Constant.COLUMN_NAME, name);
+        int age = student.getAge();
         values.put(Constant.COLUMN_AGE, age);
+        int randomIdCard = 0;
+        boolean newDbVersion = DbUtil.isNewDbVersion(MainApplication.getContext());
+        if (newDbVersion) {
+            values.put(Constant.COLUMN_ID_CARD, student.getIdCard());
+        }
         SQLiteDatabase writableDatabase = helper.getWritableDatabase();
         long index = writableDatabase.insert(Constant.TABLE_NAME, null, values);
         writableDatabase.close();
@@ -46,6 +53,9 @@ class DbPresenter {
         s.setId(index);
         s.setName(name);
         s.setAge(age);
+        if (newDbVersion) {
+            s.setIdCard(randomIdCard);
+        }
         DbView dbView = view.get();
         if (dbView != null) {
             dbView.refreshListView(s);
@@ -61,10 +71,18 @@ class DbPresenter {
             String name = query.getString(query.getColumnIndex(Constant.COLUMN_NAME));
             int age = query.getInt(query.getColumnIndex(Constant.COLUMN_AGE));
             long id = query.getLong(query.getColumnIndex(Constant.COLUMN_ID));
+            boolean newDbVersion = DbUtil.isNewDbVersion(MainApplication.getContext());
+            int idCard = 0;
+            if (newDbVersion) {
+                idCard = query.getInt(query.getColumnIndex(Constant.COLUMN_ID_CARD));
+            }
             student = new Student();
             student.setName(name);
             student.setAge(age);
             student.setId(id);
+            if (newDbVersion) {
+                student.setIdCard(idCard);
+            }
             list.add(student);
         }
         readableDatabase.close();
@@ -91,6 +109,9 @@ class DbPresenter {
         values.put(Constant.COLUMN_ID, student.getId());
         values.put(Constant.COLUMN_NAME, student.getName());
         values.put(Constant.COLUMN_AGE, student.getAge());
+        if (DbUtil.isNewDbVersion(MainApplication.getContext())){
+            values.put(Constant.COLUMN_ID_CARD,student.getIdCard());
+        }
         db.update(Constant.TABLE_NAME, values, Constant.COLUMN_ID + "=?", new String[]{String.valueOf(id)});
         db.close();
 
@@ -104,7 +125,7 @@ class DbPresenter {
         if (delete == 1) {
             db.close();
             search();
-        }else {
+        } else {
             view.get().showToast("删除失败");
         }
     }
@@ -119,11 +140,19 @@ class DbPresenter {
             long id = cursor.getLong(idIndex);
             int ageIndex = cursor.getColumnIndex(Constant.COLUMN_AGE);
             int age = cursor.getInt(ageIndex);
+            boolean newDbVersion = DbUtil.isNewDbVersion(MainApplication.getContext());
+            int idCard = 0;
+            if (newDbVersion) {
+                idCard = cursor.getInt(cursor.getColumnIndex(Constant.COLUMN_ID_CARD));
+            }
             String name = cursor.getString(nameIndex);
             Student student = new Student();
             student.setId(id);
             student.setName(name);
             student.setAge(age);
+            if (newDbVersion) {
+                student.setIdCard(idCard);
+            }
             students.add(student);
         }
         cursor.close();
@@ -132,5 +161,12 @@ class DbPresenter {
         if (dbView != null) {
             dbView.refreshListView(students);
         }
+    }
+
+    void Upgrade(Context context) {
+        helper = new LocalDbHelper(context, Constant.VERSION_NEW);
+        helper.getWritableDatabase();
+        helper.close();
+        view.get().showToast("升级数据库成功");
     }
 }

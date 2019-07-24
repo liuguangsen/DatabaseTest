@@ -4,14 +4,18 @@
     <string name="delete">删除</string>
     <string name="name">学生的名字</string>
     <string name="age">学生的年龄</string>
+    <string name="idCard">学生的身份证</string>
     <string name="title">标题</string>
     <string name="sure">确认</string>
     <string name="nameHint">名字是 %s</string>
     <string name="ageHint">年龄是 %d</string>
     <string name="add">添加</string>
-    <string name="data">id: %d\n名字：%s\n年龄：%d</string>
+    <string name="data">id: %d 名字：%s 年龄：%d</string>
+    <string name="data_new">id: %d 名字：%s 年龄：%d 身份证：%d</string>
     <string name="hint">请输入名字和年龄</string>
     <string name="refresh">刷新</string>
     <string name="save_permission_hint">你必须开启存储权限，才能操作</string>
     <string name="find">查询学生</string>
+    <string name="update">升级</string>
+    <string name="new_db_has_update">数据库已经升级</string>
 </resources>

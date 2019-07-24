@@ -8,8 +8,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="@string/change"
         android:layout_marginTop="0dp"
+        android:text="@string/change"
         android:textColor="@color/colorPrimary" />
 
     <android.support.v7.widget.AppCompatEditText
@@ -17,8 +17,8 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/dialog_title"
-        android:hint="@string/name"
         android:layout_centerHorizontal="true"
+        android:hint="@string/name"
         android:padding="15dp"
         android:textColor="@color/colorPrimary"
         android:textColorHint="@color/colorPrimary" />
@@ -28,18 +28,31 @@
         android:layout_width="150dp"
         android:layout_height="wrap_content"
         android:layout_below="@id/name"
+        android:layout_centerHorizontal="true"
         android:hint="@string/age"
         android:inputType="number"
-        android:layout_centerHorizontal="true"
         android:padding="15dp"
         android:textColor="@color/colorPrimary"
         android:textColorHint="@color/colorPrimary" />
+
+    <android.support.v7.widget.AppCompatEditText
+        android:id="@+id/id_card"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/age"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/idCard"
+        android:inputType="number"
+        android:padding="15dp"
+        android:textColor="@color/colorPrimary"
+        android:textColorHint="@color/colorPrimary"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/sure"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/age"
+        android:layout_below="@id/id_card"
         android:layout_centerHorizontal="true"
         android:text="@string/sure"
         android:textColor="@color/colorPrimary" />

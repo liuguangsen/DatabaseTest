@@ -19,5 +19,13 @@ public final class Constant {
 
     public static final String COLUMN_AGE = "age";
 
+    public static final String COLUMN_ID_CARD = "idCard";
+
     public static final int VERSION = 1;
+
+    public static final int VERSION_NEW = 2;
+
+    public static final String KEY_DB_VERSION = "db_version";
+
+    public static final String SP_NAME = "sp_name";
 }

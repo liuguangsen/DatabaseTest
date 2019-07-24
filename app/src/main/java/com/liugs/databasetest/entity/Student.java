@@ -4,6 +4,7 @@ public class Student {
     long id;
     String name;
     int age;
+    int idCard;
 
     public long getId() {
         return id;
@@ -27,5 +28,13 @@ public class Student {
 
     public void setAge(int age) {
         this.age = age;
+    }
+
+    public int getIdCard() {
+        return idCard;
+    }
+
+    public void setIdCard(int idCard) {
+        this.idCard = idCard;
     }
 }

@@ -53,7 +53,13 @@ public class StudentAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         final Student student = list.get(position);
-        holder.dataView.setText(context.getString(R.string.data, student.getId(), student.getName(), student.getAge()));
+        String data;
+        if (DbUtil.isNewDbVersion(MainApplication.getContext())) {
+            data = context.getString(R.string.data_new, student.getId(), student.getName(), student.getAge(), student.getIdCard());
+        } else {
+            data = context.getString(R.string.data, student.getId(), student.getName(), student.getAge());
+        }
+        holder.dataView.setText(data);
         holder.changeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

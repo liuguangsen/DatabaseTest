@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.liugs.databasetest.entity.Student;
@@ -25,6 +26,8 @@ class OperationDialog extends Dialog {
     private UpdateOperation updateOperation;
     private AddOperation addOperation;
     private AppCompatTextView title;
+    private boolean newDbVersion;
+    private AppCompatEditText idCardEdit;
 
     OperationDialog(Context context) {
         super(context);
@@ -42,6 +45,7 @@ class OperationDialog extends Dialog {
         nameEdit.setText(changeStudent.getName());
         nameEdit.setSelection(nameEdit.getText().length());
         ageEdit.setText(String.valueOf(changeStudent.getAge()));
+        initIdCard();
     }
 
     void setUpdateCallback(UpdateOperation callback) {
@@ -52,6 +56,12 @@ class OperationDialog extends Dialog {
         this.addOperation = addCallback;
         this.title.setText(R.string.add);
         currentType = TYPE_ADD;
+        initIdCard();
+    }
+
+    private void initIdCard(){
+        newDbVersion = DbUtil.isNewDbVersion(getContext());
+        idCardEdit.setVisibility(newDbVersion ? View.VISIBLE : View.GONE);
     }
 
     private void init() {
@@ -59,32 +69,41 @@ class OperationDialog extends Dialog {
         title = findViewById(R.id.dialog_title);
         nameEdit = findViewById(R.id.name);
         ageEdit = findViewById(R.id.age);
+        idCardEdit = findViewById(R.id.id_card);
         Button sure = findViewById(R.id.sure);
-        if (sure != null) {
-            sure.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Editable nameEdit = OperationDialog.this.nameEdit.getEditableText();
-                    Editable ageEdit = OperationDialog.this.ageEdit.getEditableText();
-                    String name = nameEdit.toString();
-                    String age = ageEdit.toString();
-                    if (TextUtils.isEmpty(name) || TextUtils.isEmpty(age)) {
-                        Toast.makeText(getContext(), R.string.hint, Toast.LENGTH_SHORT).show();
-                        return;
-                    }
-                    if (currentType == TYPE_UPDATE) {
-                        changeStudent.setName(name);
-                        changeStudent.setAge(Integer.valueOf(age));
-                        updateOperation.onStudent(changeStudent);
-                    } else if (currentType == TYPE_ADD) {
-                        Student student = new Student();
-                        student.setName(name);
-                        student.setAge(Integer.valueOf(age));
-                        addOperation.onStudent(student);
-                    }
+        if (sure != null) sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Editable nameEdit = OperationDialog.this.nameEdit.getEditableText();
+                Editable ageEdit = OperationDialog.this.ageEdit.getEditableText();
+                String name = nameEdit.toString();
+                String age = ageEdit.toString();
+                String idCard = "";
+                if (newDbVersion) {
+                    idCard = idCardEdit.getEditableText().toString();
                 }
-            });
-        }
+                if (TextUtils.isEmpty(name) || TextUtils.isEmpty(age)) {
+                    Toast.makeText(getContext(), R.string.hint, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                if (currentType == TYPE_UPDATE) {
+                    changeStudent.setName(name);
+                    changeStudent.setAge(Integer.valueOf(age));
+                    if (newDbVersion){
+                        changeStudent.setIdCard(Integer.valueOf(idCard));
+                    }
+                    updateOperation.onStudent(changeStudent);
+                } else if (currentType == TYPE_ADD) {
+                    Student student = new Student();
+                    student.setName(name);
+                    student.setAge(Integer.valueOf(age));
+                    if (newDbVersion){
+                        student.setIdCard(Integer.valueOf(idCard));
+                    }
+                    addOperation.onStudent(student);
+                }
+            }
+        });
     }
 
 
